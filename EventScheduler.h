@@ -7,6 +7,12 @@
 
 
 class EventScheduler {
+    // uses the default constructor and destructor.
+
+    // decides which event should happen next.
+    int select_event();
+
+    //
 
 };
 
