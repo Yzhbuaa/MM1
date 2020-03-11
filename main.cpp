@@ -2,12 +2,11 @@
 #include "Customer.h"
 #include "Server.h"
 #include "EventScheduler.h"
+#include <vector>
 
 using std::cout;
 using std::cin;
 using std::endl;
-
-
 
 struct Input{
 
@@ -20,10 +19,11 @@ struct Input{
     int maximum_number_of_customer;
     int maximum_queue_length;
 
-} input;
+};
 
 int main() {
 
+    Input input;
     // input
     cout << "Please enter server number, mean interarrival time, mean service time, \nmaximum number of customer, and maximum queue length:" << endl;
     cin >> input.server_number >>input.mean_interarrival_time>>input.mean_service_time>>input.maximum_number_of_customer>>input.maximum_queue_length;
@@ -35,35 +35,10 @@ int main() {
     customer_0.set_appear_time_(event_scheduler.get_current_time_());
     event_scheduler.EventInFutureEventSet(&customer_0);
 
-    // process
+//  process
     while(server.GetTotalCustomerServedNumber() < input.maximum_number_of_customer){
-        Customer * customer_pointer = event_scheduler.select_event();
-
-
-
-
-
+        Customer *customer_pointer = event_scheduler.select_event();
     }
-
-
-
-
-
-
-
-
-
-
-
-//    cin >> server_number >> ;
-//    if(server_number != 1){
-//        cout << "error" <<endl;
-//        return 0;
-//    }
-
-
-
-
 
 
 

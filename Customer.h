@@ -8,6 +8,8 @@
 #include <random>
 #include "Server.h"
 
+const double Infinity = -1;
+
 class Server;
 class Customer {
 public:
@@ -16,8 +18,8 @@ public:
 //    Customer():interarrival_time_(0.0),appear_time_(0.0),
 //    leaving_time_(0.0),waiting_in_queue_time_(0.0),server_(NULL){}
 
-    Customer(const Server &s):interarrival_time_(0.0),appear_time_(0.0),
-                        leaving_time_(1.0e30),waiting_in_queue_time_(0.0),server_(s){
+    explicit Customer(const Server &s):interarrival_time_(0.0),appear_time_(0.0),
+                        leaving_time_(Infinity),waiting_in_queue_time_(0.0),server_(s),event_time_{0.0}{
     }
 
     Customer(const Server &s, const std::mt19937::result_type sd, const double lambda):Customer(s){
@@ -75,8 +77,8 @@ private:
 // Customer comparator
 struct PCompare{
     inline bool operator()(const Customer *lhs, const Customer *rhs) const{
-        double lhs_event_time = (lhs->get_leaving_time_())?(lhs->get_leaving_time_()):(lhs->get_appear_time_());
-        double rhs_event_time = (rhs->get_leaving_time_())?(rhs->get_leaving_time_()):(rhs->get_appear_time_());
+        double lhs_event_time = (lhs->get_leaving_time_()!=Infinity)?(lhs->get_leaving_time_()):(lhs->get_appear_time_());
+        double rhs_event_time = (rhs->get_leaving_time_()!=Infinity)?(rhs->get_leaving_time_()):(rhs->get_appear_time_());
         return (lhs_event_time < rhs_event_time);
     }
 };

@@ -7,6 +7,7 @@
 
 #include "Server.h"
 #include "Customer.h"
+#include <iostream>
 #include <random>
 #include <list>
 #include <vector>
@@ -18,7 +19,7 @@ class EventScheduler {
 public:
 
     // decides which event should happen next.
-    Customer* select_event();
+    Customer* select_event(){return *(future_event_set_.cbegin());};
 
     // setters
     void set_current_time_(double time){ current_time_ = time;}
@@ -31,12 +32,31 @@ public:
     double get_time_since_last_event() const{return time_since_last_event_;}
 
     // puts an event in order of occurrence
-    // TODO::IMPL
-    void EventInFutureEventSet(Customer *customer){future_event_set_.emplace(customer);}
+    // test code:
+    //    std::vector<Customer> customer_vec;
+    //    for (int i = 0; i < 10; ++i) {
+    //        Customer customer(server,event_scheduler.get_current_time_()+i, input.mean_interarrival_time);
+    //        cout << customer.get_interarrival_time_() << " " ;
+    //        customer_vec.push_back(customer);
+    //    }
+    //    cout << endl;
+    //
+    //    for(auto itr=customer_vec.begin();itr!=customer_vec.end();++itr)
+    //        event_scheduler.EventInFutureEventSet(&(*itr));
+    //    event_scheduler.PrintFutureEventSet();
+    void EventInFutureEventSet(Customer *customer){future_event_set_.insert(customer);}
 
     // takes out an event which should happen now, and put it into the current_event_list
     // TODO::IMPL
     void EventOutFutureEventSet(){}
+
+    // print out the future_event_set_
+    void PrintFutureEventSet(){
+        for(auto itr = future_event_set_.cbegin(); itr!=future_event_set_.cend();++itr){
+            std::cout << (((*itr)->get_leaving_time_()!=Infinity)?((*itr)->get_leaving_time_()):((*itr)->get_appear_time_())) << " ";
+        }
+        std::cout << std::endl;
+    }
 
 private:
     // time
