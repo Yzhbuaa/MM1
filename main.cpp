@@ -34,13 +34,20 @@ int main() {
     Customer customer_0(server, event_scheduler.get_current_time_(), input.mean_interarrival_time);
     customer_0.set_appear_time_(event_scheduler.get_current_time_());
     event_scheduler.EventInFutureEventSet(&customer_0);
-
+    
 //  process
     while(server.GetTotalCustomerServedNumber() < input.maximum_number_of_customer){
-        Customer *customer_pointer = event_scheduler.select_event();
+        Customer *customer = event_scheduler.select_event();
+
+        // if the customer hasn't been served yet.
+        if(customer->get_leaving_time_()==Infinity){
+            customer->Arrive();
+           event_scheduler.EventInFutureEventSet();
+        }
+        else{// the customer has been served already.
+            customer->Departure();
+        }
     }
-
-
 
     return 0;
 }

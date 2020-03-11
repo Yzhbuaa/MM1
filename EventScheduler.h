@@ -13,13 +13,19 @@
 #include <vector>
 #include <set>
 
+class Customer;
 class EventScheduler {
     // uses the default constructor and destructor.
 
 public:
 
-    // decides which event should happen next.
-    Customer* select_event(){return *(future_event_set_.cbegin());};
+    // decides which event should happen next, set the current time
+    Customer* select_event(){
+        double leaving_time = (*(future_event_set_.cbegin()))->get_leaving_time_();
+        double appear_time  = (*(future_event_set_.cbegin()))->get_appear_time_();
+        current_time_ = (leaving_time!=Infinity)?(leaving_time):(appear_time);
+        return *(future_event_set_.cbegin());
+    }
 
     // setters
     void set_current_time_(double time){ current_time_ = time;}
@@ -44,7 +50,10 @@ public:
     //    for(auto itr=customer_vec.begin();itr!=customer_vec.end();++itr)
     //        event_scheduler.EventInFutureEventSet(&(*itr));
     //    event_scheduler.PrintFutureEventSet();
-    void EventInFutureEventSet(Customer *customer){future_event_set_.insert(customer);}
+    void EventInFutureEventSet(Customer *customer){
+        customer->set_event_time_(); 
+        future_event_set_.insert(customer);
+    }
 
     // takes out an event which should happen now, and put it into the current_event_list
     // TODO::IMPL
@@ -53,7 +62,7 @@ public:
     // print out the future_event_set_
     void PrintFutureEventSet(){
         for(auto itr = future_event_set_.cbegin(); itr!=future_event_set_.cend();++itr){
-            std::cout << (((*itr)->get_leaving_time_()!=Infinity)?((*itr)->get_leaving_time_()):((*itr)->get_appear_time_())) << " ";
+            std::cout << (*itr)->get_event_time_() << " ";//(((*itr)->get_leaving_time_()!=Infinity)?((*itr)->get_leaving_time_()):((*itr)->get_appear_time_())) << " ";
         }
         std::cout << std::endl;
     }

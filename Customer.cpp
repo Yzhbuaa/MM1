@@ -24,6 +24,14 @@ double Customer::InterarrivalTimeCalc(const std::mt19937::result_type sd, const 
 }
 
 bool Customer::Arrive() {
+
+
+
+    if(server_.get_server_status_()==ServerStatus::IDLE){
+        server_.set_server_status_(ServerStatus::BUSY);
+
+    }
+
     return false;
 }
 

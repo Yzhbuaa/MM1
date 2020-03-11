@@ -8,6 +8,7 @@
 #include <random>
 #include "Server.h"
 
+
 const double Infinity = -1;
 
 class Server;
@@ -18,11 +19,11 @@ public:
 //    Customer():interarrival_time_(0.0),appear_time_(0.0),
 //    leaving_time_(0.0),waiting_in_queue_time_(0.0),server_(NULL){}
 
-    explicit Customer(const Server &s):interarrival_time_(0.0),appear_time_(0.0),
+    explicit Customer(Server &s):interarrival_time_(0.0),appear_time_(0.0),
                         leaving_time_(Infinity),waiting_in_queue_time_(0.0),server_(s),event_time_{0.0}{
     }
 
-    Customer(const Server &s, const std::mt19937::result_type sd, const double lambda):Customer(s){
+    Customer(Server &s, const std::mt19937::result_type sd, const double lambda):Customer(s){
         InterarrivalTimeCalc(sd,lambda);
     }
 
@@ -56,6 +57,8 @@ public:
     double get_leaving_time_() const { return  leaving_time_;}
     double set_leaving_time_(double time) {leaving_time_=time;}
 
+    double set_event_time_(){event_time_ = (leaving_time_<0)?(appear_time_):(leaving_time_);}
+    double get_event_time_() const{return event_time_;}
 
     const Server &get_server() const {return server_;};
 
@@ -68,17 +71,18 @@ private:
     double interarrival_time_; // time interval between last customer's arrival time and this customer's arrival time.
     double appear_time_; // this customer's appear_time_ = current_time_ + interarrival_time_.
     double leaving_time_; // this customer's leaving_time_
-    double event_time_; // event_time = appear_time_ or event_time_ = leaving_time_ depending on the
+    double event_time_; // event_time = appear_time_ or event_time_ = leaving_time_ depending on whether this customer has been served.
     double waiting_in_queue_time_; // waiting_in_queue_time_ = leaving_time_ - appear_time_.
 
-    const Server &server_; // server that servers this customer.
+
+    Server &server_; // server that servers this customer.
 };
 
 // Customer comparator
 struct PCompare{
     inline bool operator()(const Customer *lhs, const Customer *rhs) const{
-        double lhs_event_time = (lhs->get_leaving_time_()!=Infinity)?(lhs->get_leaving_time_()):(lhs->get_appear_time_());
-        double rhs_event_time = (rhs->get_leaving_time_()!=Infinity)?(rhs->get_leaving_time_()):(rhs->get_appear_time_());
+        double lhs_event_time = lhs->get_event_time_();//(lhs->get_leaving_time_()!=Infinity)?(lhs->get_leaving_time_()):(lhs->get_appear_time_());
+        double rhs_event_time = rhs->get_event_time_();//(rhs->get_leaving_time_()!=Infinity)?(rhs->get_leaving_time_()):(rhs->get_appear_time_());
         return (lhs_event_time < rhs_event_time);
     }
 };
