@@ -5,6 +5,7 @@
 #include "Customer.h"
 #include <cmath>
 
+
 // uses mt19937 as a pseudo-random generator and uniform_real_distribution<double>
 // to generate the interarrival time of this Customer
 //
@@ -17,14 +18,15 @@ double Customer::InterarrivalTimeCalc(const std::mt19937::result_type sd, const 
     std::mt19937 rng; // sets pseudo-random engine
     rng.seed(sd); // sets random seed
     std::uniform_real_distribution<double> dist_zero2one(0,1); // distribution in range [0,1)
+    interarrival_time_ =(-1/lambda)*log(dist_zero2one(rng));
 
-    return (-1/lambda)*log(dist_zero2one(rng));
+    return interarrival_time_;
 }
 
-bool Customer::arrival() {
+bool Customer::Arrive() {
     return false;
 }
 
-bool Customer::departure() {
+bool Customer::Departure() {
     return false;
 }

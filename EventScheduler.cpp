@@ -3,3 +3,15 @@
 //
 
 #include "EventScheduler.h"
+
+Customer* EventScheduler::select_event() {
+    for(auto itr = future_event_list_.cbegin(); itr!=future_event_list_.cend();++itr){
+        return (*itr);
+    }
+
+}
+
+
+
+
+

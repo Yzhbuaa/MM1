@@ -6,15 +6,17 @@
 #define QUEUE_MM1_SERVER_H
 
 #include <random>
+#include <queue>
+#include "Customer.h"
 
+// TODO:: put the global variate to somewhere else?
+enum ServerStatus{
+    BUSY,
+    IDLE
+};
+
+class Customer;
 class Server {
-    // uses the default constructor and destructor.
-
-public:
-    enum ServerStatus{
-        BUSY,
-        IDLE
-    };
 
 public:
     // Returns the interarrival time of this Customer using exponential distribution
@@ -40,15 +42,40 @@ public:
 
     // example:
 //    Server server1;
-//    server1.SetStatus(Server::ServerStatus::BUSY);
-//    cout << "the server status is:" << server1.GetStatus() << endl;
-    ServerStatus GetStatus(){return server_status_;}
+//    server1.set_server_status_(ServerStatus::BUSY);
+//    cout << "the server status is:" << server1.get_server_status_() << endl;
+    ServerStatus get_server_status_() const {return server_status_;}
 
-    void SetStatus(ServerStatus ss){server_status_ = ss;}
+    ServerStatus set_server_status_(ServerStatus ss){ server_status_ = ss; return server_status_;}
+
+    const int get_queue_length_() const {return customer_queue_.size();}
+
+    void CustomerInQueue(Customer *customer){customer_queue_.push(customer);}
+
+    void CustomerOutQueue(Customer *customer){customer_queue_.pop();}
+
+    int GetTotalCustomerServedNumber() const {return total_customer_served_number_;}
+    void IncreaseTotalCustomerServedNumber(){++total_customer_served_number_;}
+
+
 
 private:
-    ServerStatus server_status_;
 
+    std::queue<Customer*> customer_queue_; // TODO::how would this variate be destructed?
+
+    // statistic(each server has its own statistic, currently there is only one server in use)
+    // server utilization
+    ServerStatus server_status_{ServerStatus::IDLE};
+    double server_utilization_{0.0}; // server_status_ * time_since_last_event
+
+    // average customer waiting time in queue
+    int total_customer_served_number_{0};
+    double total_customer_waiting_time_in_queue_{0.0};
+    double average_customer_waiting_time_in_queue_{0.0};
+
+    // average customer number in queue
+    double queue_area_{0.0}; // queue_area_ += customer_queue_.size() * time_since_last_event_
+    double average_customer_number_in_queue_{0.0}; // queue_area_ / current_time_
 };
 
 
