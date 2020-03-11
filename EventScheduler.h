@@ -10,6 +10,7 @@
 #include <random>
 #include <list>
 #include <vector>
+#include <set>
 
 class EventScheduler {
     // uses the default constructor and destructor.
@@ -31,11 +32,11 @@ public:
 
     // puts an event in order of occurrence
     // TODO::IMPL
-    void EventInFutureEventList(Customer *customer){future_event_list_.push_back(customer);}
+    void EventInFutureEventSet(Customer *customer){future_event_set_.emplace(customer);}
 
     // takes out an event which should happen now, and put it into the current_event_list
     // TODO::IMPL
-    void EventOutFutureEventList(){}
+    void EventOutFutureEventSet(){}
 
 private:
     // time
@@ -44,8 +45,8 @@ private:
     double time_since_last_event_{0.0}; // current_time_ - time_last_event_(in corresponding server).
 
     // future event list and current event list.
-    std::list<Customer*> future_event_list_;
-    std::list<Customer*> current_event_list_;
+    std::set<Customer*,PCompare> future_event_set_;
+    std::set<Customer*,PCompare> current_event_set_;
 };
 
 

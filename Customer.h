@@ -51,6 +51,9 @@ public:
     double get_interarrival_time_() const{ return interarrival_time_;}
     double get_waiting_in_queue_time_() const{return waiting_in_queue_time_;}
 
+    double get_leaving_time_() const { return  leaving_time_;}
+    double set_leaving_time_(double time) {leaving_time_=time;}
+
 
     const Server &get_server() const {return server_;};
 
@@ -69,5 +72,13 @@ private:
     const Server &server_; // server that servers this customer.
 };
 
+// Customer comparator
+struct PCompare{
+    inline bool operator()(const Customer *lhs, const Customer *rhs) const{
+        double lhs_event_time = (lhs->get_leaving_time_())?(lhs->get_leaving_time_()):(lhs->get_appear_time_());
+        double rhs_event_time = (rhs->get_leaving_time_())?(rhs->get_leaving_time_()):(rhs->get_appear_time_());
+        return (lhs_event_time < rhs_event_time);
+    }
+};
 
 #endif //MM1_PROJ_CUSTOMER_H

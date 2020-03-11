@@ -33,10 +33,13 @@ int main() {
     Server server;
     Customer customer_0(server, event_scheduler.get_current_time_(), input.mean_interarrival_time);
     customer_0.set_appear_time_(event_scheduler.get_current_time_());
-    event_scheduler.EventInFutureEventList(&customer_0);
+    event_scheduler.EventInFutureEventSet(&customer_0);
 
     // process
     while(server.GetTotalCustomerServedNumber() < input.maximum_number_of_customer){
+        Customer * customer_pointer = event_scheduler.select_event();
+
+
 
 
 

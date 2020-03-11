@@ -16,6 +16,7 @@ enum ServerStatus{
 };
 
 class Customer;
+
 class Server {
 
 public:
@@ -56,8 +57,6 @@ public:
 
     int GetTotalCustomerServedNumber() const {return total_customer_served_number_;}
     void IncreaseTotalCustomerServedNumber(){++total_customer_served_number_;}
-
-
 
 private:
 
