@@ -52,7 +52,7 @@ public:
     double get_waiting_in_queue_time_() const{return waiting_in_queue_time_;}
 
     double get_leaving_time_() const { return  leaving_time_;}
-    double set_leaving_time_(double time) {leaving_time_=time;}
+    double set_leaving_time_(double current_time,double service_time) {leaving_time_=current_time+service_time;}
 
     double set_event_time_(){event_time_ = (leaving_time_<0)?(appear_time_):(leaving_time_);}
     double get_event_time_() const{return event_time_;}

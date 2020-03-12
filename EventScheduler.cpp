@@ -10,9 +10,11 @@ void EventScheduler::CalculateStatistics() {
 }
 
 void EventScheduler::Initialize(const Input &i){
+    customer_vec_.reserve(100);
     input = i ; //get the input
-    Server server; //initializes server
-    Customer first_customer(&server,current_time_,input.mean_service_time); // generate the first customer
+    Server server; // initialize server
+    server_vec_.push_back(server);
+    Customer first_customer(&(server_vec_.front()),current_time_,input.mean_service_time); // generate the first customer
     customer_vec_.push_back(first_customer); // records customer
     event_customer_ = &(customer_vec_.back());
     set_event_server_();
@@ -26,6 +28,7 @@ void EventScheduler::Arrive() {
     // TODO::select server
     Customer new_customer(event_server_,current_time_,input.mean_interarrival_time);
     new_customer.set_appear_time_(current_time_);
+    new_customer.set_server_(&(server_vec_.front())); //TODO::MMN modified
     customer_vec_.push_back(new_customer);
     EventInFutureEventSet(&(customer_vec_.back()));
 
@@ -34,9 +37,9 @@ void EventScheduler::Arrive() {
 
         event_server_->IncreaseTotalCustomerServedNumber();
 
-        // schedule a departure event
-        double service_time = event_server_->get_service_time_(current_time_,input.mean_service_time);
-        event_customer_->set_leaving_time_(current_time_+service_time);
+        // schedule a departure event, current+1 to avoid that the service_time is strictly equal with the appear time
+        double service_time = event_server_->get_service_time_(current_time_+1,input.mean_service_time);
+        event_customer_->set_leaving_time_(current_time_,service_time);
         EventInFutureEventSet(event_customer_);
     }
     else{// BUSY
@@ -45,18 +48,37 @@ void EventScheduler::Arrive() {
         }
         else{
             std::cout<< "queue length too long, stop simulation.";
+            exit(0);
         }
     }
 }
 
 void EventScheduler::Departure() {
-
+    std::cout<< event_server_->get_queue_length_() <<std::endl;
+    if((event_server_->get_queue_length_())==0){
+        event_server_->set_server_status_(ServerStatus::IDLE);
+    }
+    else{
+        event_server_->CustomerOutQueue();
+        if((event_server_->get_queue_length_())==0){
+            event_server_->set_server_status_(ServerStatus::IDLE);
+        }
+        else{
+            double service_time = event_server_->get_service_time_(current_time_,input.mean_service_time);
+            Customer *customer_next_being_served = event_server_->CustomerNextBeingServed();
+            customer_next_being_served->set_leaving_time_(current_time_,service_time);
+            customer_next_being_served->set_server_(&(server_vec_.front()));
+            EventInFutureEventSet(customer_next_being_served);
+        }
+    }
 }
 
 void EventScheduler::Process() {
     //TODO:: MMN modified choose server
     while(event_server_->get_total_customer_served_number_()<input.maximum_number_of_customer){
         set_event_customer_();
+        set_event_server_();
+        EventOutFutureEventSet();
         AdvanceClock();
         CalculateStatistics();
 
@@ -68,6 +90,7 @@ void EventScheduler::Process() {
             Departure();
         }
     }
+
 }
 
 

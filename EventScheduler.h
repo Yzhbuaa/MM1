@@ -99,7 +99,7 @@ public:
 
     // takes out an event which should happen now, and put it into the current_event_list
     // TODO::IMPL
-    void EventOutFutureEventSet(){}
+    void EventOutFutureEventSet(){future_event_set_.erase(future_event_set_.begin());}
 
     void CustomerInVector(Customer customer){
         customer_vec_.push_back(customer);
@@ -113,6 +113,11 @@ public:
             std::cout << (*itr)->get_event_time_() << " ";//(((*itr)->get_leaving_time_()!=Infinity)?((*itr)->get_leaving_time_()):((*itr)->get_appear_time_())) << " ";
         }
         std::cout << std::endl;
+    }
+
+    void PrintOutStatistics(){
+        std::cout<< ""
+
     }
 
 private:

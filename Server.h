@@ -11,8 +11,8 @@
 
 // TODO:: put the global variate to somewhere else?
 enum ServerStatus{
-    BUSY,
-    IDLE
+    IDLE,
+    BUSY
 };
 
 class Customer;
@@ -52,7 +52,8 @@ public:
     const int get_queue_length_() const {return customer_queue_.size();}
 
     void CustomerInQueue(Customer *customer){customer_queue_.push(customer);}
-    void CustomerOutQueue(Customer *customer){customer_queue_.pop();}
+    void CustomerOutQueue(){customer_queue_.pop();}
+    Customer *CustomerNextBeingServed(){return customer_queue_.front();}
 
     int get_total_customer_served_number_() const {return total_customer_served_number_;}
 
