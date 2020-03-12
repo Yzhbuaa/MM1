@@ -14,18 +14,60 @@
 #include <set>
 
 class Customer;
+class Server;
+struct Input{
+
+    Input():server_number(0), mean_interarrival_time(0), mean_service_time(0),
+            maximum_number_of_customer(0),maximum_queue_length(0){}
+
+//    Input(std::istream &is){ read(is,*this);}
+//
+//    std::istream &read(std::istream &is, Input &input){
+//        is >> input.server_number >> input.mean_interarrival_time >>input.mean_service_time>>input.maximum_number_of_customer >> input.maximum_queue_length;
+//        return is;
+//    }
+// TODO::make the member variables const.
+    int server_number;
+    double mean_interarrival_time;
+    double mean_service_time;
+    int maximum_number_of_customer;
+    int maximum_queue_length;
+};
+
 class EventScheduler {
     // uses the default constructor and destructor.
 
 public:
 
-    // decides which event should happen next, set the current time
-    Customer* select_event(){
-        double leaving_time = (*(future_event_set_.cbegin()))->get_leaving_time_();
-        double appear_time  = (*(future_event_set_.cbegin()))->get_appear_time_();
-        current_time_ = (leaving_time!=Infinity)?(leaving_time):(appear_time);
-        return *(future_event_set_.cbegin());
+    // initializer
+    void Initialize(const Input &i);
+
+    // process
+    void Process();
+
+    // decides which event should happen next, set the corresponding server.
+    void set_event_customer_(){
+        event_customer_ = *(future_event_set_.begin());
     }
+    // TODO:: MMN modified
+    void set_event_server_(){
+        event_server_ = event_customer_->get_server_();
+    }
+
+    // set time_last_event_
+    // set current_time_
+    // set time_since_last_event_
+    void AdvanceClock(){
+        set_time_last_event_();
+        set_current_time_(event_customer_->get_event_time_());
+        set_time_since_last_event_();
+    }
+
+    // triggers arrive event.
+    void Arrive();
+
+    // triggers departure event.
+    void Departure();
 
     // setters
     void set_current_time_(double time){ current_time_ = time;}
@@ -39,25 +81,31 @@ public:
 
     // puts an event in order of occurrence
     // test code:
-    //    std::vector<Customer> customer_vec;
+    //    std::vector<Customer> customer_vec_;
     //    for (int i = 0; i < 10; ++i) {
-    //        Customer customer(server,event_scheduler.get_current_time_()+i, input.mean_interarrival_time);
+    //        Customer customer(server_,event_scheduler.get_current_time_()+i, input.mean_interarrival_time);
     //        cout << customer.get_interarrival_time_() << " " ;
-    //        customer_vec.push_back(customer);
+    //        customer_vec_.push_back(customer);
     //    }
     //    cout << endl;
     //
-    //    for(auto itr=customer_vec.begin();itr!=customer_vec.end();++itr)
+    //    for(auto itr=customer_vec_.begin();itr!=customer_vec_.end();++itr)
     //        event_scheduler.EventInFutureEventSet(&(*itr));
     //    event_scheduler.PrintFutureEventSet();
     void EventInFutureEventSet(Customer *customer){
-        customer->set_event_time_(); 
+        customer->set_event_time_();
         future_event_set_.insert(customer);
     }
 
     // takes out an event which should happen now, and put it into the current_event_list
     // TODO::IMPL
     void EventOutFutureEventSet(){}
+
+    void CustomerInVector(Customer customer){
+        customer_vec_.push_back(customer);
+    }
+
+    void CalculateStatistics();
 
     // print out the future_event_set_
     void PrintFutureEventSet(){
@@ -70,12 +118,21 @@ public:
 private:
     // time
     double current_time_{0.0}; // current simulation time.
-    double time_last_event_{0.0}; // time when last event triggers in corresponding server(currently there is only one server).
+    double time_last_event_{0.0}; // time when last event triggers in corresponding server(currently there is only one event_server_).
     double time_since_last_event_{0.0}; // current_time_ - time_last_event_(in corresponding server).
+
+    Server *event_server_{nullptr}; // server which is/are in used, treated as a statistical "big container"  default constructed
+    Customer *event_customer_{nullptr}; // currently processing customer, treat as event element, default constructed
+
+    std::vector<Customer> customer_vec_; // stores all customers
+    std::vector<Server>   server_vec_; //stores all servers
 
     // future event list and current event list.
     std::set<Customer*,PCompare> future_event_set_;
     std::set<Customer*,PCompare> current_event_set_;
+
+    // input
+    Input input;
 };
 
 

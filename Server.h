@@ -34,17 +34,17 @@ public:
     //      int cnt = 0;
     //      double lambda = 1/3600;
     //      for(int i=0;i<1000;++i){
-    //          long double x = server1.ServiceTimeCalc(i,lambda);
+    //          long double x = server1.get_service_time_(i,lambda);
     //          std::cout << x << std::endl;
     //          cnt+=x;
     //      }
     //      std::cout<< cnt/1000 <<std::endl; // approximately 3600
-    double ServiceTimeCalc(const std::mt19937::result_type sd, const double lambda);
+    double get_service_time_(const std::mt19937::result_type sd, const double lambda);
 
     // example:
 //    Server server1;
 //    server1.set_server_status_(ServerStatus::BUSY);
-//    cout << "the server status is:" << server1.get_server_status_() << endl;
+//    cout << "the event_server_ status is:" << server1.get_server_status_() << endl;
     ServerStatus get_server_status_() const {return server_status_;}
 
     ServerStatus set_server_status_(ServerStatus ss){ server_status_ = ss; return server_status_;}
@@ -52,19 +52,25 @@ public:
     const int get_queue_length_() const {return customer_queue_.size();}
 
     void CustomerInQueue(Customer *customer){customer_queue_.push(customer);}
-
     void CustomerOutQueue(Customer *customer){customer_queue_.pop();}
 
-    int GetTotalCustomerServedNumber() const {return total_customer_served_number_;}
+    int get_total_customer_served_number_() const {return total_customer_served_number_;}
+
     void IncreaseTotalCustomerServedNumber(){++total_customer_served_number_;}
 
+    void set_queue_area_(double time_since_last_event){queue_area_ += customer_queue_.size()*time_since_last_event;}
+
+    void set_server_status_area(double time_since_last_event){server_status_area += server_status_*time_since_last_event;}
+
 private:
+    double service_time_{0.0};
 
     std::queue<Customer*> customer_queue_; // TODO::how would this variate be destructed?
 
-    // statistic(each server has its own statistic, currently there is only one server in use)
+    // statistic(each server has its own statistic, currently there is only one event_server_ in use)
     // server utilization
     ServerStatus server_status_{ServerStatus::IDLE};
+    double server_status_area{0.0};
     double server_utilization_{0.0}; // server_status_ * time_since_last_event
 
     // average customer waiting time in queue

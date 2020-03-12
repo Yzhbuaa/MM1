@@ -16,14 +16,11 @@ class Customer {
 public:
 
     // constructor
-//    Customer():interarrival_time_(0.0),appear_time_(0.0),
-//    leaving_time_(0.0),waiting_in_queue_time_(0.0),server_(NULL){}
-
-    explicit Customer(Server &s):interarrival_time_(0.0),appear_time_(0.0),
+    explicit Customer(Server *s):interarrival_time_(0.0),appear_time_(0.0),
                         leaving_time_(Infinity),waiting_in_queue_time_(0.0),server_(s),event_time_{0.0}{
     }
 
-    Customer(Server &s, const std::mt19937::result_type sd, const double lambda):Customer(s){
+    Customer(Server *s, const std::mt19937::result_type sd, const double lambda):Customer(s){
         InterarrivalTimeCalc(sd,lambda);
     }
 
@@ -60,7 +57,8 @@ public:
     double set_event_time_(){event_time_ = (leaving_time_<0)?(appear_time_):(leaving_time_);}
     double get_event_time_() const{return event_time_;}
 
-    const Server &get_server() const {return server_;};
+    Server *get_server_() const {return server_;}
+    void   *set_server_(Server *server) {server_ = server;}
 
     bool Arrive();
 
@@ -68,14 +66,13 @@ public:
     bool Departure();
 
 private:
-    double interarrival_time_; // time interval between last customer's arrival time and this customer's arrival time.
-    double appear_time_; // this customer's appear_time_ = current_time_ + interarrival_time_.
-    double leaving_time_; // this customer's leaving_time_
-    double event_time_; // event_time = appear_time_ or event_time_ = leaving_time_ depending on whether this customer has been served.
-    double waiting_in_queue_time_; // waiting_in_queue_time_ = leaving_time_ - appear_time_.
+    double interarrival_time_{0.0}; // time interval between last customer's arrival time and this customer's arrival time.
+    double appear_time_{0.0}; // this customer's appear_time_ = current_time_ + interarrival_time_.
+    double leaving_time_{0.0}; // this customer's leaving_time_
+    double event_time_{0.0}; // event_time = appear_time_ or event_time_ = leaving_time_ depending on whether this customer has been served.
+    double waiting_in_queue_time_{0.0}; // waiting_in_queue_time_ = leaving_time_ - appear_time_.
 
-
-    Server &server_; // server that servers this customer.
+    Server *server_{nullptr}; // server_ that servers this customer.
 };
 
 // Customer comparator
