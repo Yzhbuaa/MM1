@@ -35,7 +35,8 @@ void EventScheduler::Arrive() {
     if(event_server_->get_server_status_()==ServerStatus::IDLE){
         event_server_->set_server_status_(ServerStatus::BUSY);
 
-        event_server_->IncreaseTotalCustomerServedNumber();
+        event_server_->CustomerInQueue(event_customer_);
+        event_server_->IncreaseTotalCustomerServedNumber();// everyone who successfully arrives should be counting in the total customer served number
 
         // schedule a departure event, current+1 to avoid that the service_time is strictly equal with the appear time
         double service_time = event_server_->get_service_time_(current_time_+1,input.mean_service_time);
@@ -45,6 +46,7 @@ void EventScheduler::Arrive() {
     else{// BUSY
         if(event_server_->get_queue_length_()<input.maximum_queue_length){
             event_server_->CustomerInQueue(event_customer_);
+            event_server_->IncreaseTotalCustomerServedNumber(); // everyone who successfully arrives should be counting in the total customer served number
         }
         else{
             std::cout<< "queue length too long, stop simulation.";
@@ -54,18 +56,18 @@ void EventScheduler::Arrive() {
 }
 
 void EventScheduler::Departure() {
-    std::cout<< event_server_->get_queue_length_() <<std::endl;
     if((event_server_->get_queue_length_())==0){
         event_server_->set_server_status_(ServerStatus::IDLE);
     }
     else{
+        event_server_->set_total_customer_waiting_time_(event_server_->GetCustomerGoingToDeparture());
         event_server_->CustomerOutQueue();
         if((event_server_->get_queue_length_())==0){
             event_server_->set_server_status_(ServerStatus::IDLE);
         }
         else{
             double service_time = event_server_->get_service_time_(current_time_,input.mean_service_time);
-            Customer *customer_next_being_served = event_server_->CustomerNextBeingServed();
+            Customer *customer_next_being_served = event_server_->GetCustomerNextBeingServed();
             customer_next_being_served->set_leaving_time_(current_time_,service_time);
             customer_next_being_served->set_server_(&(server_vec_.front()));
             EventInFutureEventSet(customer_next_being_served);
@@ -90,7 +92,7 @@ void EventScheduler::Process() {
             Departure();
         }
     }
-
+    PrintOutStatistics();
 }
 
 

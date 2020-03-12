@@ -17,10 +17,10 @@ int main() {
 //    cin >> input.server_number >>input.mean_interarrival_time>>input.mean_service_time>>input.maximum_number_of_customer>>input.maximum_queue_length;
 
     input.server_number=1;
-    input.mean_interarrival_time=1000;
-    input.mean_service_time = 1000;
-    input.maximum_number_of_customer =10;
-    input.maximum_queue_length =10;
+    input.mean_interarrival_time=30;
+    input.mean_service_time = 30;
+    input.maximum_number_of_customer =100;
+    input.maximum_queue_length =100;
     // initialize (the constructors of class EventScheduler, Server, and Customer does most of the initialization work.
     EventScheduler event_scheduler;
     event_scheduler.Initialize(input);

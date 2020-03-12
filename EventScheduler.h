@@ -72,7 +72,7 @@ public:
     // setters
     void set_current_time_(double time){ current_time_ = time;}
     double set_time_last_event_(){ time_last_event_ = current_time_; return time_last_event_;}
-    double set_time_since_last_event_(){ time_since_last_event_ = current_time_ - time_since_last_event_;}
+    double set_time_since_last_event_(){ time_since_last_event_ = current_time_ - time_last_event_;}
 
     // getters
     double get_current_time_() const{return current_time_;}
@@ -116,8 +116,9 @@ public:
     }
 
     void PrintOutStatistics(){
-        std::cout<< ""
-
+        //TODO:: MMN modified
+        event_server_->SetStatistics(current_time_);
+        event_server_->PrintOutStatistics();
     }
 
 private:

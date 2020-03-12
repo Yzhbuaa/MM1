@@ -5,6 +5,7 @@
 #ifndef QUEUE_MM1_SERVER_H
 #define QUEUE_MM1_SERVER_H
 
+#include <iostream>
 #include <random>
 #include <queue>
 #include "Customer.h"
@@ -53,7 +54,8 @@ public:
 
     void CustomerInQueue(Customer *customer){customer_queue_.push(customer);}
     void CustomerOutQueue(){customer_queue_.pop();}
-    Customer *CustomerNextBeingServed(){return customer_queue_.front();}
+    Customer *GetCustomerNextBeingServed(){return customer_queue_.front();}
+    Customer *GetCustomerGoingToDeparture(){return customer_queue_.front();}
 
     int get_total_customer_served_number_() const {return total_customer_served_number_;}
 
@@ -62,6 +64,20 @@ public:
     void set_queue_area_(double time_since_last_event){queue_area_ += customer_queue_.size()*time_since_last_event;}
 
     void set_server_status_area(double time_since_last_event){server_status_area += server_status_*time_since_last_event;}
+
+    void set_total_customer_waiting_time_(Customer *customer_going_to_departure);
+
+    void SetStatistics(double simulation_stop_time){
+        server_utilization_ = server_status_area/simulation_stop_time;
+        average_customer_waiting_time_ = total_customer_waiting_time_/total_customer_served_number_;
+        average_customer_number_in_queue_ = queue_area_/simulation_stop_time;
+    }
+    void PrintOutStatistics(){
+        std::cout << "server utilization: " << server_utilization_ << std::endl;
+        std::cout << "average customer waiting time: " << average_customer_waiting_time_<< std::endl;
+        std::cout << "average_customer_number_in_queue: "<< average_customer_number_in_queue_<<std::endl;
+        std::cout << "total customer number: " << total_customer_served_number_;
+    }
 
 private:
     double service_time_{0.0};
@@ -76,8 +92,8 @@ private:
 
     // average customer waiting time in queue
     int total_customer_served_number_{0};
-    double total_customer_waiting_time_in_queue_{0.0};
-    double average_customer_waiting_time_in_queue_{0.0};
+    double total_customer_waiting_time_{0.0};
+    double average_customer_waiting_time_{0.0};
 
     // average customer number in queue
     double queue_area_{0.0}; // queue_area_ += customer_queue_.size() * time_since_last_event_
