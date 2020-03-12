@@ -98,7 +98,6 @@ public:
     }
 
     // takes out an event which should happen now, and put it into the current_event_list
-    // TODO::IMPL
     void EventOutFutureEventSet(){future_event_set_.erase(future_event_set_.begin());}
 
     void CustomerInVector(Customer customer){
@@ -119,6 +118,8 @@ public:
         //TODO:: MMN modified
         event_server_->SetStatistics(current_time_);
         event_server_->PrintOutStatistics();
+        std::cout<<std::endl;
+        std::cout<< "Simulation stop at " << current_time_ <<"s"<<std::endl;
     }
 
 private:

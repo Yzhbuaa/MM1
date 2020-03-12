@@ -10,7 +10,7 @@ void EventScheduler::CalculateStatistics() {
 }
 
 void EventScheduler::Initialize(const Input &i){
-    customer_vec_.reserve(100);
+    customer_vec_.reserve(i.maximum_number_of_customer);
     input = i ; //get the input
     Server server; // initialize server
     server_vec_.push_back(server);
@@ -92,7 +92,6 @@ void EventScheduler::Process() {
             Departure();
         }
     }
-    PrintOutStatistics();
 }
 
 

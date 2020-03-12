@@ -10,7 +10,6 @@
 #include <queue>
 #include "Customer.h"
 
-// TODO:: put the global variate to somewhere else?
 enum ServerStatus{
     IDLE,
     BUSY
@@ -72,9 +71,10 @@ public:
         average_customer_waiting_time_ = total_customer_waiting_time_/total_customer_served_number_;
         average_customer_number_in_queue_ = queue_area_/simulation_stop_time;
     }
+
     void PrintOutStatistics(){
-        std::cout << "server utilization: " << server_utilization_ << std::endl;
-        std::cout << "average customer waiting time: " << average_customer_waiting_time_<< std::endl;
+        std::cout << "server utilization: " << server_utilization_*100 << "%"<< std::endl;
+        std::cout << "average customer waiting time: " << average_customer_waiting_time_<<"s"<< std::endl;
         std::cout << "average_customer_number_in_queue: "<< average_customer_number_in_queue_<<std::endl;
         std::cout << "total customer number: " << total_customer_served_number_;
     }
